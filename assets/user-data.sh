@@ -15,5 +15,4 @@ echo "<h1>Hello World from $(hostname -f)</h1>" > /var/www/html/index.html
 #manage_etc_hosts: true
 hostnamectl set-hostname outlook.com 
 useradd testuser
-useradd Alvin
-useradd Admin
+useradd sysadmin
