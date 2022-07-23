@@ -7,12 +7,13 @@ import {aws_servicediscovery as servicediscovery} from "aws-cdk-lib";
 import {readFileSync} from 'fs';
 import {format,utcToZonedTime} from 'date-fns-tz';
 
-export class EC2DeployStack extends cdk.Stack {
+export class UbuntuEC2Stack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     const testLocationIp = "10.8.80.40/32"
     const appPort = '8001'
+   // const appPort = '80'
 
     //Setup VPC Configuration////////////////////////////////////////////////////////////////////////
     
@@ -63,6 +64,14 @@ export class EC2DeployStack extends cdk.Stack {
       ],
     })
 
+  //  const userData: ec2.UserData = readFileSync('./assets/ubuntu-default-user-data.sh', 'utf8');
+
+    const machineImage = new ec2.GenericSSMParameterImage(
+      '/aws/service/canonical/ubuntu/server/focal/stable/current/amd64/hvm/ebs-gp2/ami-id',
+      ec2.OperatingSystemType.LINUX,
+     // userData
+    )
+
     // Define EC2 Instance and Properties:
     const ec2Instance = new ec2.Instance(this, 'ec2-instance', {
       vpc,
@@ -70,25 +79,28 @@ export class EC2DeployStack extends cdk.Stack {
       vpcSubnets: {
         subnetType: ec2.SubnetType.PUBLIC,
       },
+      // init: ec2.CloudFormationInit.fromElements(
+      //   ec2.InitCommand.shellCommand('sudo apt-get update -y'),
+      //   ec2.InitCommand.shellCommand('sudo apt-get install -y nginx')
+      // ),
       securityGroup: webserverSG,
       instanceType: ec2.InstanceType.of(
         ec2.InstanceClass.T3,
         //ec2.InstanceSize.NANO,
         ec2.InstanceSize.MEDIUM,
       ),
-      machineImage: new ec2.AmazonLinuxImage({
-        generation: ec2.AmazonLinuxGeneration.AMAZON_LINUX_2,
-      }),
+      machineImage: machineImage
+
     });
 
-    // 👇 load user data script
-    const userDataScript = readFileSync('./assets/redisInsight-user-data.sh', 'utf8');
+     // 👇 load user data script
+    const userDataScript = readFileSync('./assets/ubuntu-default-user-data.sh', 'utf8');
     
     // 👇 add user data to the EC2 instance
     ec2Instance.addUserData(userDataScript);
+ 
 
-
-    cdk.Tags.of(ec2Instance).add("Name", "CDK_Linux_EC2")
+    cdk.Tags.of(ec2Instance).add("Name", "CDK_Ubuntu")
     cdk.Tags.of(ec2Instance).add("Service", "EC2")
 
 

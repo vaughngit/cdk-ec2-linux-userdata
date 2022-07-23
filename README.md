@@ -15,3 +15,8 @@ Reference: https://www.lifewire.com/create-users-useradd-command-3572157
    sudo amazon-linux-extras install epel
    curl --silent --location https://rpm.nodesource.com/setup_16.x | bash -
    sudo yum -y install nodejs
+
+
+# Redis Resources:
+   Install RedisInsight on AWS EC2: https://docs.redis.com/latest/ri/installing/install-ec2/
+   
