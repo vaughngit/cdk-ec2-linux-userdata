@@ -20,3 +20,6 @@ Reference: https://www.lifewire.com/create-users-useradd-command-3572157
 # Redis Resources:
    Install RedisInsight on AWS EC2: https://docs.redis.com/latest/ri/installing/install-ec2/
    
+# ATTO Disk Benchmark for Windows
+## Industry Standard Application for Analyzing Storage Performance
+https://www.atto.com/disk-benchmark/

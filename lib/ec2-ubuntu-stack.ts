@@ -18,8 +18,8 @@ export class UbuntuEC2Stack extends cdk.Stack {
     //Setup VPC Configuration////////////////////////////////////////////////////////////////////////
     
    //Resuse VPC Option 1:    
-    const vpcId =  ssm.StringParameter.valueFromLookup( this, `/tnc/dev/vpcId`    );
-    const vpc = ec2.Vpc.fromLookup(this, `reference vpc from vpcid stored in ssm params`, { vpcId: vpcId });
+  //  const vpcId =  ssm.StringParameter.valueFromLookup( this, `/tnc/dev/vpcId`    );
+  //  const vpc = ec2.Vpc.fromLookup(this, `reference vpc from vpcid stored in ssm params`, { vpcId: vpcId });
  
 
   /*  //Resuse VPC Option 2:  
@@ -31,7 +31,7 @@ export class UbuntuEC2Stack extends cdk.Stack {
     });
  */
     //VPC Reference Option 3: 
-   // const vpc = ec2.Vpc.fromLookup(this, 'default vpc in account', { isDefault: true,  });
+    const vpc = ec2.Vpc.fromLookup(this, 'default vpc in account', { isDefault: true,  });
    
     // Create new Security Group for EC2 Instance: 
     const webserverSG = new ec2.SecurityGroup(this, 'webserver-sg', {
