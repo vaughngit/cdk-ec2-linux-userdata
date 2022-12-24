@@ -13,7 +13,7 @@ const dateStamp = date_ob.toDateString()
 const timestamp = date_ob.toLocaleTimeString()
 const dtstamp = dateStamp+''+' '+timestamp
 const aws_region = 'us-east-2'
-const solutionName = "cloudwatch-monitoring"
+const solutionName = "cloud9Restored"
 const environment = "dev"
 const costcenter = "12_1_12_9_20_8"
 const ec2KeyName = "OhioDevKey"
@@ -57,7 +57,7 @@ new EC2WindowsStack(app, 'win-ec2', {
   ec2KeyName,
   dtstamp,
   appPort: 22,
-  testingLocation: "104.111.111.40/32" 
+  testingLocation: "0.0.0.0/32" 
 });
 
 
@@ -75,7 +75,7 @@ new UbuntuEc2UserdataStack(app, 'ubuntu-userdata', {
   ec2KeyName,
   dtstamp,
   appPort: 22,
-  testingLocation: "104.111.111.40/32" 
+  testingLocation: "0.0.0.0/32" 
 })
 
 const ubuntu = new UbuntuEC2Stack(app, 'ubuntu', {

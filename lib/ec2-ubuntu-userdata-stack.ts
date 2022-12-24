@@ -41,31 +41,32 @@ export class UbuntuEc2UserdataStack extends cdk.Stack {
     });
  */
     //VPC Reference Option 3: 
- //   const vpc = ec2.Vpc.fromLookup(this, 'default vpc in account', { isDefault: true,  });
+    const vpc = ec2.Vpc.fromLookup(this, 'default vpc in account', { isDefault: true,  });
 
 
    //import the VPC 
-   const vpcId = ssm.StringParameter.valueFromLookup(this, `/${props.solutionName}/${props.environment}/vpcId`)
-   const vpc = ec2.Vpc.fromLookup(this, `${props.solutionName}-import-vpc`, { vpcId });
+  // const vpcId = ssm.StringParameter.valueFromLookup(this, `/${props.solutionName}/${props.environment}/vpcId`)
+  // const vpc = ec2.Vpc.fromLookup(this, `${props.solutionName}-import-vpc`, { vpcId });
 
     // Create new Security Group for EC2 Instance: 
     const appserverSG = new ec2.SecurityGroup(this, 'app-server-sg', { vpc,  });
 
     //Define ingress rule for security group 
     //  OPtion 1:
-    appserverSG.addIngressRule(
-      ec2.Peer.anyIpv4(),
-      ec2.Port.tcp(props.appPort),
-      'allow app traffic from anywhere',
-    ); 
+    // appserverSG.addIngressRule(
+    //   ec2.Peer.anyIpv4(),
+    //   ec2.Port.tcp(props.appPort),
+    //   'allow app traffic from anywhere',
+    // ); 
 
        // Option 2:
-    // appserverSG.addIngressRule(
-    //   ec2.Peer.ipv4(props.testLocationIp),
-    //   ec2.Port.tcp(parseInt(appPort)),
-    //   'allow app traffic from specific location',
-    // );
-
+    appserverSG.addIngressRule(
+      ec2.Peer.ipv4(props.testingLocation),
+      //ec2.Port.tcp(parseInt(appPort)),
+      ec2.Port.tcp(props.appPort),
+      'allow app traffic from specific location',
+    );
+/* 
     // 👇 import security groups by ID
     const ec2SgIdSsmParam = ssm.StringParameter.valueFromLookup(this,`/${props.solutionName}/${props.environment}/ec2SgId`)
     const ec2SG = ec2.SecurityGroup.fromSecurityGroupId(this,'imported-sg',  ec2SgIdSsmParam  );
@@ -76,7 +77,7 @@ export class UbuntuEc2UserdataStack extends cdk.Stack {
       ec2.Port.allTraffic(),
       `allow traffic on port from the ALB security group through to ecs security group`,
     )
-
+ */
 
     //user data: 
     const userData = ec2.UserData.forLinux()
@@ -85,8 +86,8 @@ export class UbuntuEc2UserdataStack extends cdk.Stack {
       'apt-get install -y git awscli ec2-instance-connect',
       'cd /',
       'until git clone https://github.com/aws-quickstart/quickstart-linux-utilities.git; do echo "Retrying"; done',
-      'until git clone https://github.com/vaughngit/aws-cdk.git; do echo "Retrying"; done',
-      'cd /aws-cdk'
+      //'until git clone https://github.com/vaughngit/aws-cdk.git; do echo "Retrying"; done',
+      //'cd /aws-cdk'
     )
 
 
@@ -148,20 +149,21 @@ export class UbuntuEc2UserdataStack extends cdk.Stack {
 
 
     cdk.Tags.of(this).add("Name", props.serviceName)
-    cdk.Tags.of(this).add("Service", "EC2")
+    //cdk.Tags.of(this).add("Service", "EC2")
     Tags.of(this).add("solution", props.solutionName)
     Tags.of(this).add("environment", props.environment)
     Tags.of(this).add("costcenter", props.costcenter)
 
 
-  let date = new Date();
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const centraltime= utcToZonedTime(date,timezone)
-  const timestamp = format(centraltime, `yyyy-MM-dd HH:mm:ss`) 
+  // let date = new Date();
+  // const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  // const centraltime= utcToZonedTime(date,timezone)
+  // const timestamp = format(centraltime, `yyyy-MM-dd HH:mm:ss`) 
 
-  new cdk.CfnOutput(this, "Timestamp", {value: timestamp }); 
+  //new cdk.CfnOutput(this, "Timestamp", {value: timestamp }); 
   new cdk.CfnOutput(this, "private ip", {value: `${ec2Instance.instancePrivateIp}`})
   new cdk.CfnOutput(this, "instanceId", {value: `${ec2Instance.instanceId}`})
+  new cdk.CfnOutput(this, "public ip", {value: `${ec2Instance.instancePublicIp}`})
   }
   
 }
