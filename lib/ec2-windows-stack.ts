@@ -38,11 +38,11 @@ export class EC2WindowsStack extends Stack {
   });
 
   //Target Default VPC
- // const vpc = ec2.Vpc.fromLookup(this, 'import default vpc', { isDefault: true });
+  const vpc = ec2.Vpc.fromLookup(this, 'import default vpc', { isDefault: true });
 
     //import the VPC 
-    const vpcId = ssm.StringParameter.valueFromLookup(this, `/${props.solutionName}/${props.environment}/vpcId`)
-    const vpc = ec2.Vpc.fromLookup(this, `${props.solutionName}-import-vpc`, { vpcId });
+   // const vpcId = ssm.StringParameter.valueFromLookup(this, `/${props.solutionName}/${props.environment}/vpcId`)
+   // const vpc = ec2.Vpc.fromLookup(this, `${props.solutionName}-import-vpc`, { vpcId });
 
   //Create Instance SecurityGroup -
   const serverSG = new ec2.SecurityGroup(this, 'create security group for instance', {vpc});
@@ -149,7 +149,8 @@ export class EC2WindowsStack extends Stack {
       keyName: props.ec2KeyName, 
       blockDevices: [rootVolume],
       vpcSubnets: {
-        subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
+       // subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
+       subnetType: ec2.SubnetType.PUBLIC
       },
       machineImage: new ec2.WindowsImage(WindowsVersion.WINDOWS_SERVER_2022_ENGLISH_FULL_BASE),
       instanceType: ec2.InstanceType.of(
@@ -170,7 +171,7 @@ export class EC2WindowsStack extends Stack {
     new cdk.CfnOutput(this, 'username', {value:user })
     new cdk.CfnOutput(this, 'password', {value: password}) 
     new cdk.CfnOutput(this, 'InstanceId', {value: ec2Instance.instanceId})
-    new cdk.CfnOutput(this, 'InstancePrivateDnsName', {value: ec2Instance.instancePrivateDnsName})
+   // new cdk.CfnOutput(this, 'InstancePrivateDnsName', {value: ec2Instance.instancePrivateDnsName})
 
   }
   
